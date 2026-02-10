@@ -1,0 +1,20 @@
+RewriteEngine On
+
+# Force HTTPS (uncomment when SSL is active)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# If the request is for an existing file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Block direct access to .php files (redirect to clean URL)
+RewriteCond %{THE_REQUEST} \s/(.+)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Map clean URLs to their PHP files
+RewriteRule ^(index|login|register|logout|dashboard|create|edit|delete|verify|resend-verification|api_generate)/?$ $1.php [L,QSA]
+
+# Everything else is a user page slug
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ page.php?slug=$1 [L,QSA]
